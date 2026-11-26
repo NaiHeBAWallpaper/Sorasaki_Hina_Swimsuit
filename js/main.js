@@ -9,6 +9,8 @@ let renderTimer;
 let spineData;
 
 let customScale = 1;
+let positionX = 0;
+let positionY = 0;
 let targetFps = 60;
 let bgmfile = './assets/audio/Midnight Trip.flac';
 let bgmvolume = 0;
@@ -32,7 +34,17 @@ let flipped = false;
 let transpose = 1;
 
 let currentTracks = []; // 跟踪当前播放的音频
-window.selectedLanguage = 'Japanese'; // 全局语言变量（挂载到window对象）
+let interfaceLanguage = 'default';
+let steamLanguage = '';
+let subtitleLanguagePreference = 'auto';
+window.selectedLanguage = 'English';
+const subtitleLocales = {
+	English: 'en',
+	Chinese: 'zh-Hans',
+	TraditionalChinese: 'zh-Hant',
+	Japanese: 'ja',
+	Korean: 'ko'
+};
 
 const CHARACTER = 'CH0063';
 let modelResolution = '8k';
@@ -56,6 +68,14 @@ const AUDIO_DETAIL = [
 			Chinese: [
 				"为什么大家都那么喜欢大海呢……我一直在思考。",
 				"虽然大家看起来很开心，但是我却怎么也喜欢不上…"
+			],
+			TraditionalChinese: [
+				"為什麼大家，都那麼喜歡大海呢……我一直都這麼思考著。",
+				"雖然大家看起來都很開心，但是我實在是沒辦法喜歡大海……"
+			],
+			Korean: [
+				"어째서 모두들, 그렇게나 바다를 좋아하는 걸까 ……라고, 쭉 생각해왔어.",
+				"다들 즐거워 보이지만…… 난 아무래도 좋아지지가 않아서……."
 			]
 		}
 	},
@@ -72,6 +92,14 @@ const AUDIO_DETAIL = [
 			Chinese: [
 				"水里既看不清楚，脚也不能沾地，这样就会很不安……",
 				"老师也这么想吗？"
+			],
+			TraditionalChinese: [
+				"在水裡會看不清楚，腳又無法著地，會令人不安……",
+				"老師有沒有也這麼想過？"
+			],
+			Korean: [
+				"물속은 제대로 보이지도 않고, 발도 바닥에 닿지 않으면 불안하고…….",
+				"선생도, 그런 생각 해본 적 없어?"
 			]
 		}
 	},
@@ -88,6 +116,14 @@ const AUDIO_DETAIL = [
 			Chinese: [
 				"特别是夜晚的大海，简直就像深渊一样令人毛骨悚然……",
 				"只是看着就好像被吸进去了，我不喜欢……"
+			],
+			TraditionalChinese: [
+				"特別是夜晚的大海，就像黑暗一樣，很陰森……",
+				"光是注視著就好像會被吸進去，雖然沒辦法喜歡……"
+			],
+			Korean: [
+				"특히 밤바다라는 건, 꼭 새카만 우물 같은 게 으스스해서……",
+				"보고 있으면 빨려 들어갈 것만 같아, 도저히 좋아할 수 없었는데……."
 			]
 		}
 	},
@@ -104,6 +140,14 @@ const AUDIO_DETAIL = [
 			Chinese: [
 				"但是……现在，感觉稍微明白了大家的心情。",
 				"大海，原来这么漂亮啊。"
+			],
+			TraditionalChinese: [
+				"不過……現在，好像能稍微，理解大家的心情了。",
+				"原來大海，這麼美麗呀。"
+			],
+			Korean: [
+				"하지만……. 이제는, 모두의 기분을 조금은 알 것 같아.",
+				"바다라는 건 이렇게 예쁜 거였구나."
 			]
 		}
 	},
@@ -120,6 +164,14 @@ const AUDIO_DETAIL = [
 			Chinese: [
 				"不可思议……到现在为止，明明没有这样想过。",
 				"谢谢你，老师。陪着我……告诉我各种各样的事情。"
+			],
+			TraditionalChinese: [
+				"真神奇……至今為止，明明沒有這麼想過。",
+				"謝謝你，老師。陪著我……告訴我各種各樣的事情。"
+			],
+			Korean: [
+				"신기해……. 지금까지, 이런 식으로 생각해본 적 없었는데.",
+				"고마워, 선생님... 나와 함께해줘서 그리고 가르쳐준 모든 것에 대해"
 			]
 		}
 	}
@@ -305,7 +357,8 @@ function drawHitboxes() {
 		n = (n / transpose) - (d[side].length / (transpose * 2));
 		n = n * customScale + (d[side].length / (transpose * 2));
 		n = (d[side].length / (transpose * 2)) - n;
-		return d[side].mid - n;
+		const offset = side === 'x' ? canvas.width * positionX : canvas.height * positionY;
+		return d[side].mid - n + offset;
 	}
 
 	for (const key in HITBOX) {
@@ -398,12 +451,45 @@ function setMouse(event) {
 		ax = canvas.width - ax;
 	}
 
-	return { x: ax, y: ay }
+	return { x: ax - canvas.width * positionX, y: ay - canvas.height * positionY };
+}
+
+function updateSubtitleLanguage() {
+	let language = subtitleLanguagePreference;
+	if (language === 'auto') {
+		const locale = interfaceLanguage === 'default' ? steamLanguage : interfaceLanguage;
+		const [primary, region] = locale.split(/[-_]/);
+		if (primary === 'tchinese' || (primary === 'zh' && ['cht', 'hant', 'tw', 'hk', 'mo'].includes(region))) {
+			language = 'TraditionalChinese';
+		} else if (primary === 'schinese' || primary === 'zh') {
+			language = 'Chinese';
+		} else if (primary === 'ja' || primary === 'japanese') {
+			language = 'Japanese';
+		} else if (primary === 'ko' || primary === 'korean' || primary === 'koreana') {
+			language = 'Korean';
+		} else {
+			language = 'English';
+		}
+	}
+
+	if (language === window.selectedLanguage) return;
+	window.selectedLanguage = language;
+	textbox.lang = subtitleLocales[language];
+	const clip = currentTracks.at(-1);
+	if (dialogBox && clip) textbox.textContent = clip.dialog[language][clip.index];
 }
 
 function init() {
 	// Wallpaper Engine settings
 	window.wallpaperPropertyListener = {
+		applyGeneralProperties: (props) => {
+			const language = props.language?.value ?? props.language;
+			const steamLocale = props.steamlanguage?.value ?? props.steamlanguage;
+			if (typeof language !== 'string' && typeof steamLocale !== 'string') return;
+			if (typeof language === 'string') interfaceLanguage = language.toLowerCase();
+			if (typeof steamLocale === 'string') steamLanguage = steamLocale.toLowerCase();
+			updateSubtitleLanguage();
+		},
 		applyUserProperties: (props) => {
 			if (props.schemecolor) {
 				bufferColor = props.schemecolor.value.split(" ");
@@ -412,8 +498,16 @@ function init() {
 			if (props.scale) {
 				customScale = props.scale.value;
 				document.documentElement.style.setProperty('--wallpaper-scale', customScale);
-				resize();
 			}
+			if (props.positionx) {
+				positionX = props.positionx.value / 100;
+				document.documentElement.style.setProperty('--wallpaper-position-x', props.positionx.value + 'vw');
+			}
+			if (props.positiony) {
+				positionY = props.positiony.value / 100;
+				document.documentElement.style.setProperty('--wallpaper-position-y', props.positiony.value + 'vh');
+			}
+			if (props.scale || props.positionx || props.positiony) resize();
 			if (props.targetfps) targetFps = props.targetfps.value;
 
 			if (props.introanimation) introAnimation = props.introanimation.value;
@@ -421,7 +515,7 @@ function init() {
 				const selected = props.modelresolution.value;
 				if (['2k', '4k', '8k'].includes(selected)) modelResolution = selected;
 			}
-			requestModelResolution();
+			requestModelResolution(Boolean(props.modelresolution));
 
 			if (props.mousetracking) mouseOptions.mousetracking = props.mousetracking.value;
 			if (props.headpatting) mouseOptions.headpatting = props.headpatting.value;
@@ -432,14 +526,10 @@ function init() {
 			if (props.dialogy) textbox.style.top = props.dialogy.value + '%';
 			if (props.drawHitboxes) mouseOptions.drawHitboxes = props.drawHitboxes.value;
 
-			// 新增：监听语言选择
 			if (props.dialoglanguage) {
-				window.selectedLanguage = props.dialoglanguage.value; // 更新全局语言变量
-				// 更新当前播放的音频文本
-				const clip = currentTracks[currentTracks.length - 1];
-				if (dialogBox && clip) {
-					textbox.textContent = clip.dialog[window.selectedLanguage][clip.index];
-				}
+				const language = props.dialoglanguage.value;
+				subtitleLanguagePreference = Object.hasOwn(subtitleLocales, language) ? language : 'auto';
+				updateSubtitleLanguage();
 			}
 
 			if (props.bgmfile) {
@@ -462,6 +552,7 @@ function init() {
 	};
 
 	textbox = document.getElementById('textbox');
+	textbox.lang = subtitleLocales[window.selectedLanguage];
 
 	canvas = document.getElementById('canvas');
 	canvas.addEventListener('mouseleave', releaseHeadpatOnExit);
@@ -492,6 +583,7 @@ function init() {
 		if (typeof introAnimation === 'undefined') introAnimation = true;
 		requestModelResolution();
 	}, 350);
+	window.addEventListener('resize', resize);
 	window.addEventListener('pagehide', event => {
 		if (event.persisted) return;
 		canvas.style.visibility = 'hidden';
@@ -540,8 +632,8 @@ function interactionLoad() {
 	return 1;
 }
 
-function requestModelResolution() {
-	if (!assetManager || modelFrame || typeof introAnimation === 'undefined' || loadingResolution === modelResolution) return;
+function requestModelResolution(force = false) {
+	if (!assetManager || modelFrame || typeof introAnimation === 'undefined' || (!force && loadingResolution === modelResolution)) return;
 	loadingResolution = modelResolution;
 	const directory = loadingResolution === '8k' ? 'assets/' : 'assets/' + loadingResolution + '/';
 	const models = [CHARACTER + '_home'];
@@ -712,9 +804,12 @@ function render() {
 function resize() {
 	let w = canvas.clientWidth;
 	let h = canvas.clientHeight;
+	if (w === 0 || h === 0) return;
 	if (canvas.width != w || canvas.height != h) {
 		canvas.width = w;
 		canvas.height = h;
+		overlay.width = w;
+		overlay.height = h;
 	}
 
 	// Set values to position skeleton to center of canvas.
@@ -740,7 +835,7 @@ function resize() {
 		transpose = 1600 / canvas.height;
 	}
 
-	mvp.ortho2d(centerX - width / 2, centerY - height / 2, width, height);
+	mvp.ortho2d(centerX - width / 2 - positionX * width, centerY - height / 2 + positionY * height, width, height);
 	gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
