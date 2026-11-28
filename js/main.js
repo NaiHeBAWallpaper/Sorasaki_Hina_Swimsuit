@@ -43,7 +43,8 @@ const subtitleLocales = {
 	Chinese: 'zh-Hans',
 	TraditionalChinese: 'zh-Hant',
 	Japanese: 'ja',
-	Korean: 'ko'
+	Korean: 'ko',
+	Thai: 'th'
 };
 
 const CHARACTER = 'CH0063';
@@ -62,12 +63,12 @@ const AUDIO_DETAIL = [
 				"みんなは楽しそうだけど、私はどうしても好きになれなくて……"
 			],
 			English: [
-				"Why does everyone love the ocean so much...? I've always wondered.",
-				"Everyone seems to be having fun, but I just can't bring myself to like it..."
+				"Honestly, I've never understood people's fascination with the ocean.",
+				"While everyone's having a good time, I've never felt the same way."
 			],
 			Chinese: [
-				"为什么大家都那么喜欢大海呢……我一直在思考。",
-				"虽然大家看起来很开心，但是我却怎么也喜欢不上…"
+				"为什么大家都那么喜欢大海呢？我一直在思考这个问题。",
+				"虽然大家看起来都很开心……可我却无论如何都喜欢不起来……"
 			],
 			TraditionalChinese: [
 				"為什麼大家，都那麼喜歡大海呢……我一直都這麼思考著。",
@@ -76,7 +77,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"어째서 모두들, 그렇게나 바다를 좋아하는 걸까 ……라고, 쭉 생각해왔어.",
 				"다들 즐거워 보이지만…… 난 아무래도 좋아지지가 않아서……."
-			]
+			],
+			Thai: ["ฉันไม่ค่อยเข้าใจหรอก ว่าทำไมทุกคนถึงชอบทะเลกัน","ถึงทุกคนดูสนุกกันมาก… แต่ฉันเองไม่ได้รู้สึกแบบนั้นเลย"]
 		}
 	},
 	{
@@ -90,8 +92,8 @@ const AUDIO_DETAIL = [
 				"Sensei, have you ever felt that way before?"
 			],
 			Chinese: [
-				"水里既看不清楚，脚也不能沾地，这样就会很不安……",
-				"老师也这么想吗？"
+				"水面下的东西都看不太清楚，脚踩不到底也让我觉得放不下心……",
+				"老师不这么觉得吗？"
 			],
 			TraditionalChinese: [
 				"在水裡會看不清楚，腳又無法著地，會令人不安……",
@@ -100,7 +102,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"물속은 제대로 보이지도 않고, 발도 바닥에 닿지 않으면 불안하고…….",
 				"선생도, 그런 생각 해본 적 없어?"
-			]
+			],
+			Thai: ["ฉันรู้สึกกังวล เวลาที่เท้า ยันพื้นไม่ถึง หรือมองไม่เห็น ข้างใต้น้ำน่ะ","คุณครู ไม่เคยคิดแบบนั้นเหรอ?"]
 		}
 	},
 	{
@@ -110,12 +113,12 @@ const AUDIO_DETAIL = [
 				"見てるだけで吸い込まれそうで、好きになれなかったけど……"
 			],
 			English: [
-				"I find it eerie... The way the sea is just a bottomless well at night.",
-				"I hate how it feels like I'll be sucked in just looking at it."
+				"I found it eerie... The way the sea was just a bottomless well at night.",
+				"I hated how it felt like I'd be sucked in just looking at it."
 			],
 			Chinese: [
-				"特别是夜晚的大海，简直就像深渊一样令人毛骨悚然……",
-				"只是看着就好像被吸进去了，我不喜欢……"
+				"特别是晚上，大海简直就像巨大的黑洞一样……",
+				"光是这样看着就有种要被吸进去的感觉……"
 			],
 			TraditionalChinese: [
 				"特別是夜晚的大海，就像黑暗一樣，很陰森……",
@@ -124,7 +127,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"특히 밤바다라는 건, 꼭 새카만 우물 같은 게 으스스해서……",
 				"보고 있으면 빨려 들어갈 것만 같아, 도저히 좋아할 수 없었는데……."
-			]
+			],
+			Thai: ["โดยเฉพาะทะเลตอนกลางคืน ดูเหมือนบ่อน้ำขนาดใหญ่ ที่ไร้จุดสิ้นสุดเลย","เพียงแค่มองก็รู้สึกเหมือนว่า จะโดนดูดเข้าไป ฉันเลย ไม่ค่อยชอบเลย"]
 		}
 	},
 	{
@@ -138,8 +142,8 @@ const AUDIO_DETAIL = [
 				"The ocean can be so beautiful."
 			],
 			Chinese: [
-				"但是……现在，感觉稍微明白了大家的心情。",
-				"大海，原来这么漂亮啊。"
+				"可是……现在我好像稍微明白一点……大家的心情了。",
+				"大海，原来这么美啊。"
 			],
 			TraditionalChinese: [
 				"不過……現在，好像能稍微，理解大家的心情了。",
@@ -148,7 +152,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"하지만……. 이제는, 모두의 기분을 조금은 알 것 같아.",
 				"바다라는 건 이렇게 예쁜 거였구나."
-			]
+			],
+			Thai: ["แต่ว่าตอนนี้ฉันเริ่มเข้าใจ ความรู้สึกทุกคนแล้วล่ะ","ว่าท้องทะเล มันสวยงามขนาดนี้นี่เอง"]
 		}
 	},
 	{
@@ -158,21 +163,22 @@ const AUDIO_DETAIL = [
 				"ありがとう、先生。一緒にいてくれて……色んなことを、教えてくれて。"
 			],
 			English: [
-				"It's a new feeling but it's interesting too.",
+				"Strange... I've never felt this way before.",
 				"Thank you, Sensei...for being here with me. And for everything you've taught me."
 			],
 			Chinese: [
-				"不可思议……到现在为止，明明没有这样想过。",
-				"谢谢你，老师。陪着我……告诉我各种各样的事情。"
+				"真是不可思议……我以前从来没这么想过。",
+				"老师，谢谢你……陪在我的身边……教会了我这么多事。"
 			],
 			TraditionalChinese: [
 				"真神奇……至今為止，明明沒有這麼想過。",
-				"謝謝你，老師。陪著我……告訴我各種各樣的事情。"
+				"謝謝你，老師。陪伴在我身邊……教導我，各種事物。"
 			],
 			Korean: [
 				"신기해……. 지금까지, 이런 식으로 생각해본 적 없었는데.",
-				"고마워, 선생님... 나와 함께해줘서 그리고 가르쳐준 모든 것에 대해"
-			]
+				"고마워, 선생님. 함께 있어줘서…… ……여러가지를, 가르쳐주어서."
+			],
+			Thai: ["แปลกจังเลย จนถึงตอนนี้ ฉันไม่เคยคิดแบบนี้มาก่อนเลย","ขอบคุณนะคุณครู... ที่อยู่ด้วยกันในตอนนี้... แล้วก็ขอบคุณที่ช่วยสอนฉัน ในหลายๆ อย่าง"]
 		}
 	}
 ];
@@ -284,7 +290,7 @@ function playVoiceline() {
 			track.play().catch(finish);
 
 			if (dialogBox) {
-				textbox.textContent = dialog[window.selectedLanguage][index];
+				textbox.textContent = getSubtitleText(dialog, window.selectedLanguage, index);
 				textbox.style.opacity = 1;
 			}
 		},
@@ -454,6 +460,16 @@ function setMouse(event) {
 	return { x: ax - canvas.width * positionX, y: ay - canvas.height * positionY };
 }
 
+function getSubtitleText(dialog, language, index) {
+	let text = dialog?.[language]?.[index];
+	if (text == null && language === 'Thai') {
+		language = 'English';
+		text = dialog?.[language]?.[index];
+	}
+	textbox.lang = subtitleLocales[language];
+	return text ?? "";
+}
+
 function updateSubtitleLanguage() {
 	let language = subtitleLanguagePreference;
 	if (language === 'auto') {
@@ -467,6 +483,8 @@ function updateSubtitleLanguage() {
 			language = 'Japanese';
 		} else if (primary === 'ko' || primary === 'korean' || primary === 'koreana') {
 			language = 'Korean';
+		} else if (primary === 'th' || primary === 'thai') {
+			language = 'Thai';
 		} else {
 			language = 'English';
 		}
@@ -476,7 +494,7 @@ function updateSubtitleLanguage() {
 	window.selectedLanguage = language;
 	textbox.lang = subtitleLocales[language];
 	const clip = currentTracks.at(-1);
-	if (dialogBox && clip) textbox.textContent = clip.dialog[language][clip.index];
+	if (dialogBox && clip) textbox.textContent = getSubtitleText(clip.dialog, language, clip.index);
 }
 
 function init() {
